@@ -128,7 +128,7 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
         return gameIdToGame[_gameId];
     }
 
-    function getGameByName(string _gameName)
+    function getGameByName(string calldata _gameName)
         public
         view
         returns (Game memory game)
