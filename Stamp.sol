@@ -33,8 +33,8 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
         uint256 _maxSupply,
         bool _salesActive
     ) public {
-        require(nameToGameId[_name] == 0);
-        require(bytes(_name).length > 0);
+        require(nameToGameId[_name] == 0, "Game with this name already exists");
+        require(bytes(_name).length > 0, "Name must not be empty");
         Game memory newGame = Game(
             _name,
             currentGameId,
@@ -53,11 +53,14 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
 
     function buyGame(uint256 _gameId) public payable {
         Game memory wantedGame = gameIdToGame[_gameId];
-        require(wantedGame.gameId > 0);
-        require(msg.value >= wantedGame.price);
-        require(wantedGame.salesActive);
+        require(wantedGame.gameId > 0, "Game does not exist");
+        require(msg.value >= wantedGame.price, "Not enough MATIC");
+        require(wantedGame.salesActive, "Game is not for sale");
         if (wantedGame.maxSupply > 0) {
-            require(wantedGame.totalSupply < wantedGame.maxSupply);
+            require(
+                wantedGame.totalSupply < wantedGame.maxSupply,
+                "Game is sold out"
+            );
         }
         _mint(msg.sender, wantedGame.gameId, 1, "");
         gameIdToGame[_gameId].maticAvailable += ((msg.value * 90) / 100);
@@ -68,7 +71,10 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
     }
 
     modifier onlyGameOwner(uint256 _gameId) {
-        require(gameIdToGame[_gameId].owner == msg.sender);
+        require(
+            gameIdToGame[_gameId].owner == msg.sender,
+            "Only game owner can perform this action"
+        );
         _;
     }
 
@@ -83,8 +89,11 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
         public
         onlyGameOwner(_gameId)
     {
-        require(bytes(_newName).length > 0);
-        require(nameToGameId[_newName] == 0);
+        require(bytes(_newName).length > 0, "Name must not be empty");
+        require(
+            nameToGameId[_newName] == 0,
+            "Game with this name already exists"
+        );
         gameIdToGame[_gameId].name = _newName;
         nameToGameId[gameIdToGame[_gameId].name] = 0;
         nameToGameId[_newName] = _gameId;
@@ -115,7 +124,10 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
         public
         onlyGameOwner(_gameId)
     {
-        require(gameIdToGame[_gameId].maticAvailable - _amount >= 0);
+        require(
+            gameIdToGame[_gameId].maticAvailable - _amount >= 0,
+            "Not enough Matic"
+        );
         gameIdToGame[_gameId].maticAvailable -= _amount;
         payable(gameIdToGame[_gameId].owner).transfer(_amount);
     }
@@ -145,7 +157,7 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
     }
 
     function withdrawContractMoney(uint256 _amount) public onlyOwner {
-        require(maticWithdraw - _amount >= 0);
+        require(maticWithdraw - _amount >= 0, "Not enough Matic");
         payable(owner()).transfer(_amount);
         maticWithdraw -= _amount;
     }
