@@ -53,7 +53,7 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
 
     function buyGame(uint256 _gameId) public payable {
         Game memory wantedGame = gameIdToGame[_gameId];
-        require(bytes(wantedGame.name).length > 0);
+        require(wantedGame.gameId > 0);
         require(msg.value >= wantedGame.price);
         require(wantedGame.salesActive);
         if (wantedGame.maxSupply > 0) {
