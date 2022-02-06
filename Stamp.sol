@@ -63,8 +63,8 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
             );
         }
         _mint(msg.sender, wantedGame.gameId, 1, "");
-        gameIdToGame[_gameId].maticAvailable += ((msg.value * 90) / 100);
-        maticWithdraw += ((msg.value * 10) / 100);
+        gameIdToGame[_gameId].maticAvailable += ((msg.value * 95) / 100);
+        maticWithdraw += ((msg.value * 5) / 100);
         gameIdToGame[_gameId].totalSupply++;
         addressToBadges[msg.sender].push(wantedGame.gameId);
         emit GameSold(wantedGame, msg.sender);
