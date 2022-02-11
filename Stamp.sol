@@ -5,7 +5,7 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract Stamp is Ownable, ERC1155("https://stamp.games/api/URI/{id}") {
+contract Stamp is Ownable, ERC1155("https://stamp.games/tokenURI?id={id}") {
     struct Game {
         string name;
         uint256 gameId;
