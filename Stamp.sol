@@ -124,6 +124,7 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/tokenURI?id={id}") {
         public
         onlyGameOwner(_gameId)
     {
+        require(_amount > 0, "Amount can't be 0!");
         require(
             gameIdToGame[_gameId].maticAvailable - _amount >= 0,
             "Not enough Matic"
@@ -157,8 +158,9 @@ contract Stamp is Ownable, ERC1155("https://stamp.games/tokenURI?id={id}") {
     }
 
     function withdrawContractMoney(uint256 _amount) public onlyOwner {
+        require(_amount > 0, "Amount can't be 0!");
         require(maticWithdraw - _amount >= 0, "Not enough Matic");
-        payable(owner()).transfer(_amount);
         maticWithdraw -= _amount;
+        payable(owner()).transfer(_amount);
     }
 }
